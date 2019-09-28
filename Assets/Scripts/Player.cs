@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Move : MonoBehaviour
+public class Player : Characters
 {
-	private Vector3 speed;
-	[SerializeField]
+	private bool isAttacking = false;
+	float nextAttack = 0;
+	private float health = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +16,9 @@ public class Move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = transform.position + speed;
+        
+    }
+    public void GetInput(){
+    	
     }
 }
