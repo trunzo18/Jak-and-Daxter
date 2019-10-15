@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Player : Characters
 {
 	
 	//private bool isAttacking = false;
 	//tells if player is in air or on ground
+	public Vector3 jump;
+	public float jumpForce = 2.0f;
+	public bool isGrounded;
+    Rigidbody rb;
 	private bool inAir = false;
 	//tells if player can jump
 	private bool canJump = true;
@@ -22,7 +27,8 @@ public class Player : Characters
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
+        jump = new Vector3(0.0f, 2.0f, 0.0f);
     }
 
     // Update is called once per frame
@@ -34,27 +40,39 @@ public class Player : Characters
         GetInput();
         //updates the character based on input
         base.Update();
+        Jump();
+
     }
+    void OnCollisionStay()
+         {
+             isGrounded = true;
+         }
     //Checks user input to control player assigns it as a vecter to character direction
     public void GetInput(){
     	direction = Vector2.zero;
     	if (Input.GetKey(KeyCode.W)){
-    		direction += Vector3.forward;
-    	}
-    	if (Input.GetKey(KeyCode.A)){
-    		direction += Vector3.left;
-    	}
-    	if(Input.GetKey(KeyCode.S)){
     		direction += Vector3.back;
     	}
-    	if(Input.GetKey(KeyCode.D)){
+    	if (Input.GetKey(KeyCode.A)){
     		direction += Vector3.right;
     	}
-    	if(Input.GetKey(KeyCode.Space)){
-    		bool temp = CheckJump();
-    		if (temp == true){
-    			direction += (10 * Vector3.up);
-    		}
+    	if(Input.GetKey(KeyCode.S)){
+    		direction += Vector3.forward;
+    	}
+    	if(Input.GetKey(KeyCode.D)){
+    		direction += Vector3.left;
+    	}
+    	// if(Input.GetKey(KeyCode.Space)){
+    	// 	bool temp = CheckJump();
+    	// 	if (temp == true){
+    	// 		direction += (10 * Vector3.up);
+    	// 	}
+    	// }
+    }
+    public void Jump(){
+    	if(Input.GetKeyDown(KeyCode.Space) && isGrounded){
+    		rb.AddForce(jump * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
     	}
     }
     //Checks if player is in air then stores it in inAir bool
