@@ -35,7 +35,7 @@ public class Player : Characters
     protected override void Update()
     {
     	//Updates the inAir bool
-    	InAir();
+    	//InAir();
     	//Checks for user input
         GetInput();
         //updates the character based on input
@@ -76,30 +76,30 @@ public class Player : Characters
     	}
     }
     //Checks if player is in air then stores it in inAir bool
-    public void InAir(){
-    	if(transform.position.y <1.1){
-    		inAir = false;
+    // public void InAir(){
+    // 	if(transform.position.y <1.1){
+    // 		inAir = false;
     		
-    	}
-    	else{
-    		inAir = true;
+    // 	}
+    // 	else{
+    // 		inAir = true;
     		
-    	}
+    // 	}
 
-    }
+    // }
     //checks if in air or if second jump has been used
-    public bool CheckJump(){
-    	if(inAir == false){
-    		canJump = true;
-    		return true;
-    	}
-    	else if(inAir == true && canJump == true){
-    		canJump = false;
-    		return true;
-    	}
-    	else{
-    		return false;
-    	}
+    // public bool CheckJump(){
+    // 	if(inAir == false){
+    // 		canJump = true;
+    // 		return true;
+    // 	}
+    // 	else if(inAir == true && canJump == true){
+    // 		canJump = false;
+    // 		return true;
+    // 	}
+    // 	else{
+    // 		return false;
+    // 	}
 
-    }
+    // }
 }
