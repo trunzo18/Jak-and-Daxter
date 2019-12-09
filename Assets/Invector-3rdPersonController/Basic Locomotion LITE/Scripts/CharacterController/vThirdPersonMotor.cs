@@ -100,12 +100,20 @@ namespace Invector.CharacterController
             isStrafing,
             isSprinting,
             isSliding,
-            attacking;
+            attacking,
+            punch,
+            spin;
+
 
         // action bools
         [HideInInspector]
         public bool
             isJumping;
+
+        [HideInInspector]
+        public float
+            attackTimer = 0.0f,
+            attackCd = 1.0f;
 
         protected void RemoveComponents()
         {
@@ -215,11 +223,36 @@ namespace Invector.CharacterController
 
         void ControlLocomotion()
         {
-            if (freeLocomotionConditions)
+            if(Input.GetMouseButtonDown(0) && !attacking){
+                attackTimer = attackCd;
+                attacking = true;
+                punch=true;
+            }
+            else if(Input.GetMouseButtonDown(1) && !attacking){
+                attackTimer = attackCd;
+                attacking = true;
+                spin=true;
+            }
+            else if (attacking){
+                if(attackTimer> 0){
+                attackTimer -= Time.deltaTime;
+                }
+                else{
+                    attacking = false;
+                    punch = false;
+                    spin = false;
+                }
+            }
+            else if (freeLocomotionConditions && !attacking){
                 FreeMovement();     // free directional movement
+            }
                 
-            else
+            else{
                 StrafeMovement();   // move forward, backwards, strafe left and right
+            }
+            animator.SetBool("Attacking",attacking);
+            animator.SetBool("Punch",punch);
+            animator.SetBool("Spin",spin);
         }
 
         void StrafeMovement()
