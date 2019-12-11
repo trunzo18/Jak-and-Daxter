@@ -5,7 +5,7 @@ using UnityEngine;
 public class Eco : MonoBehaviour
 {
 	public GameObject player;
-    // Start is called before the first frame update
+     //Start is called before the first frame update
     void Start()
     {
         
@@ -18,7 +18,7 @@ public class Eco : MonoBehaviour
     }
     void OnTriggerEnter(Collider c){
     	if ( c.tag == "Player"){
-    		//player.GetComponent<RigidBody>();
+    		Destroy(gameObject);
 
     	}
     }

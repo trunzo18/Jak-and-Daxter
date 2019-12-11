@@ -51,5 +51,6 @@ namespace Invector.CharacterController
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newRotation), strafeRotationSpeed * Time.fixedDeltaTime);
             targetRotation = transform.rotation;
         }
+        
     }
 }

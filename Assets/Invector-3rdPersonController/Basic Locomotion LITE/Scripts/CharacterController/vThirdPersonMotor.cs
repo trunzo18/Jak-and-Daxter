@@ -553,6 +553,7 @@ namespace Invector.CharacterController
         }
 
         #endregion
+        
 
     }
 }

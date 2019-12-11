@@ -3,7 +3,12 @@ guid: 679328463c25c4046870be228e8e032c
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Green_Gas
+    second: {fileID: 2100000, guid: 3497e51fce925c8459cb4f960c28aa46, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
