@@ -9,7 +9,12 @@ namespace Invector.CharacterController
 {
     public abstract class vThirdPersonMotor : MonoBehaviour
     {
-        #region Variables        
+        public GameObject detect;
+        void Awake(){
+          detect = GameObject.Find("Collection");
+        }
+
+        #region Variables
 
         #region Layers
         [Header("---! Layers !---")]
@@ -57,7 +62,7 @@ namespace Invector.CharacterController
 
         [Header("--- Movement Speed ---")]
         [Tooltip("Check to drive the character using RootMotion of the animation")]
-        public bool useRootMotion = false;      
+        public bool useRootMotion = false;
         [Tooltip("Add extra speed for the locomotion movement, keep this value at 0 if you want to use only root motion speed.")]
         public float freeWalkSpeed = 2.5f;
         [Tooltip("Add extra speed for the locomotion movement, keep this value at 0 if you want to use only root motion speed.")]
@@ -70,6 +75,10 @@ namespace Invector.CharacterController
         public float strafeRunningSpeed = 3f;
         [Tooltip("Add extra speed for the locomotion movement, keep this value at 0 if you want to use only root motion speed.")]
         public float strafeSprintSpeed = 4f;
+        public float boostMultiplyer= 1.5f;
+        public float freeWalkSpeedOrig = 2.5f;
+        public float freeRunningSpeedOrig = 3f;
+        public float freeSprintSpeedOrig = 4f;
 
         [Header("--- Grounded Setup ---")]
 
@@ -81,7 +90,7 @@ namespace Invector.CharacterController
         public float stepSmooth = 4f;
         [Tooltip("Max angle to walk")]
         [SerializeField]
-        protected float slopeLimit = 45f;       
+        protected float slopeLimit = 45f;
         [Tooltip("Apply extra gravity when the character is not grounded")]
         [SerializeField]
         protected float extraGravity = -10f;
@@ -89,8 +98,20 @@ namespace Invector.CharacterController
         public RaycastHit groundHit;
 
         #endregion
-
+        void Update(){
+          if(detect.GetComponent<Detection>().boost == true){
+            freeWalkSpeed = 3.5f;
+            freeRunningSpeed = 5f;
+            freeSprintSpeed = 6f;
+          }
+          else{
+            freeWalkSpeed = freeWalkSpeedOrig;
+            freeRunningSpeed = freeRunningSpeedOrig;
+            freeSprintSpeed = freeSprintSpeedOrig;
+          }
+        }
         #region Actions
+
 
         // movement bools
         [HideInInspector]
@@ -136,11 +157,11 @@ namespace Invector.CharacterController
         [HideInInspector]
         public Quaternion freeRotation;
         [HideInInspector]
-        public bool keepDirection;        
+        public bool keepDirection;
 
         #endregion
 
-        #region Components               
+        #region Components
 
         [HideInInspector]
         public Animator animator;                                   // access the Animator component
@@ -156,13 +177,13 @@ namespace Invector.CharacterController
         #region Hide Variables
 
         [HideInInspector]
-        public float colliderHeight;                        // storage capsule collider extra information                
+        public float colliderHeight;                        // storage capsule collider extra information
         [HideInInspector]
-        public Vector2 input;                               // generate input for the controller        
+        public Vector2 input;                               // generate input for the controller
         [HideInInspector]
         public float speed, direction, verticalVelocity;    // general variables to the locomotion
         [HideInInspector]
-        public float velocity;                              // velocity to apply to rigidbody       
+        public float velocity;                              // velocity to apply to rigidbody
 
         #endregion
 
@@ -189,7 +210,7 @@ namespace Invector.CharacterController
             maxFrictionPhysics.dynamicFriction = 1f;
             maxFrictionPhysics.frictionCombine = PhysicMaterialCombine.Maximum;
 
-            // air physics 
+            // air physics
             slippyPhysics = new PhysicMaterial();
             slippyPhysics.name = "slippyPhysics";
             slippyPhysics.staticFriction = 0f;
@@ -210,7 +231,7 @@ namespace Invector.CharacterController
             ControlLocomotion();
         }
 
-        #region Locomotion 
+        #region Locomotion
 
         protected bool freeLocomotionConditions
         {
@@ -246,7 +267,7 @@ namespace Invector.CharacterController
             else if (freeLocomotionConditions && !attacking){
                 FreeMovement();     // free directional movement
             }
-                
+
             else{
                 StrafeMovement();   // move forward, backwards, strafe left and right
             }
@@ -268,11 +289,11 @@ namespace Invector.CharacterController
         public virtual void FreeMovement()
         {
             // set speed to both vertical and horizontal inputs
-            speed = Mathf.Abs(input.x) + Mathf.Abs(input.y);            
+            speed = Mathf.Abs(input.x) + Mathf.Abs(input.y);
             speed = Mathf.Clamp(speed, 0, 1f);
             // add 0.5f on sprint to change the animation on animator
             if (isSprinting) speed += 0.5f;
-                        
+
             if (input != Vector2.zero && targetDirection.magnitude > 0.1f)
             {
                 Vector3 lookDirection = targetDirection.normalized;
@@ -286,7 +307,7 @@ namespace Invector.CharacterController
                     if (diferenceRotation < 0 || diferenceRotation > 0) eulerY = freeRotation.eulerAngles.y;
                     var euler = new Vector3(transform.eulerAngles.x, eulerY, transform.eulerAngles.z);
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(euler), freeRotationSpeed * Time.deltaTime);
-                }               
+                }
             }
         }
         protected void ControlSpeed(float velocity)
@@ -334,7 +355,7 @@ namespace Invector.CharacterController
                 jumpCounter = 0;
                 isJumping = false;
             }
-            // apply extra force to the jump height   
+            // apply extra force to the jump height
             var vel = _rigidbody.velocity;
             vel.y = jumpHeight;
             _rigidbody.velocity = vel;
@@ -348,7 +369,7 @@ namespace Invector.CharacterController
             var velY = transform.forward * jumpForward * speed;
             velY.y = _rigidbody.velocity.y;
             var velX = transform.right * jumpForward * direction;
-            velX.x = _rigidbody.velocity.x;            
+            velX.x = _rigidbody.velocity.x;
 
             if (jumpAirControl)
             {
@@ -403,7 +424,7 @@ namespace Invector.CharacterController
             var groundCheckDistance = groundMinDistance;
             if (magVel > 0.25f) groundCheckDistance = groundMaxDistance;
 
-            // clear the checkground to free the character to attack on air                
+            // clear the checkground to free the character to attack on air
             var onStep = StepOffset();
 
             if (groundDistance <= 0.05f)
@@ -461,7 +482,7 @@ namespace Invector.CharacterController
         {
             var groundAngle = Vector3.Angle(groundHit.normal, Vector3.up);
             return groundAngle;
-        }      
+        }
 
         void Sliding()
         {
@@ -553,7 +574,7 @@ namespace Invector.CharacterController
         }
 
         #endregion
-        
+
 
     }
 }
